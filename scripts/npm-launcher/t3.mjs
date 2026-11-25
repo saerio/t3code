@@ -77,9 +77,12 @@ async function download(url, file) {
 
 async function install(dir, key) {
   const archive = `t3-${version}-${key}.${process.platform === "win32" ? "zip" : "tar.gz"}`;
-  const base = (
-    process.env.T3CODE_RELEASE_BASE_URL || "https://github.com/pingdotgg/t3code/releases/download"
-  ).replace(/\/+$/, "");
+  if (!process.env.T3CODE_RELEASE_BASE_URL) {
+    throw new Error(
+      "This fork does not download upstream T3 Code release archives (they bring back removed telemetry and T3 service code). Build from source, or set T3CODE_RELEASE_BASE_URL to your own release mirror.",
+    );
+  }
+  const base = process.env.T3CODE_RELEASE_BASE_URL.replace(/\/+$/, "");
   const sums = await (await get(`${base}/v${version}/SHA256SUMS`)).text();
   const expected = /^([0-9a-f]{64})\s+\*?(.+)$/im;
   const line = sums
