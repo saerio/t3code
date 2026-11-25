@@ -194,7 +194,7 @@ export function buildNewThreadLink(input: {
   readonly repository?: PromptLinkRepository | null;
   readonly provider?: string | null;
   readonly model?: string | null;
-  readonly origin?: string;
+  readonly origin?: string | undefined;
 }): string {
   const url = input.origin ? new URL("/new", input.origin) : new URL("t3code://new");
   url.searchParams.set("prompt", input.prompt);

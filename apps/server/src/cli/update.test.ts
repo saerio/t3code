@@ -29,6 +29,7 @@ import {
   resolveLauncherPath,
 } from "../cloud/pinnedRuntime.ts";
 import * as ManagedPolicy from "../policy/ManagedPolicy.ts";
+import { managedUpdateRefusal } from "../policy/managedUpdates.ts";
 import * as ProcessRunner from "../processRunner.ts";
 import {
   repointLauncher,
@@ -157,15 +158,15 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
       ),
     );
 
-  it.effect("refuses upstream updates when no managed mirror is set", () =>
-    Effect.gen(function* () {
-      delete process.env.T3CODE_ALLOW_UPSTREAM_UPDATES;
-      const error = yield* runWithPolicy({ mode: "auto" }).pipe(
-        Effect.ensuring(Effect.sync(() => (process.env.T3CODE_ALLOW_UPSTREAM_UPDATES = "1"))),
-      );
-      assert.include(error.message, "does not update from upstream");
-    }),
-  );
+  it("refuses upstream updates by default when no managed mirror is set", () => {
+    const previous = process.env.T3CODE_ALLOW_UPSTREAM_UPDATES;
+    delete process.env.T3CODE_ALLOW_UPSTREAM_UPDATES;
+    try {
+      assert.include(managedUpdateRefusal(undefined, "stable") ?? "", "does not update from upstream");
+    } finally {
+      if (previous !== undefined) process.env.T3CODE_ALLOW_UPSTREAM_UPDATES = previous;
+    }
+  });
 
   it.effect("refuses to update when updates are off", () =>
     Effect.gen(function* () {
