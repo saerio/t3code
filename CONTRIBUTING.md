@@ -6,8 +6,7 @@ modern AI tools.
 That said, it is also ours.
 
 T3 Code is built and maintained by a small team with a clear vision. We are explicitly NOT INTERESTED
-in new feature addition PRs from people outside of said team, with a small
-[exception for vouched contributors](#vouched-features).
+in new feature addition PRs from people outside of said team.
 
 We are much more bottlenecked by review capacity than we are creativity, tokens or code. It takes more
 effort to review a PR than it does to create one in the vast majority of cases.
@@ -22,7 +21,7 @@ meaningful way.
 
 Things we are explicitly NOT interested in (and we will auto close):
 
-- New features (vouched contributors have [an exception](#vouched-features))
+- New features
 - UI overhauls
 - New providers
 - Architecture overhauls (extensions, plugins, new connection methods)
@@ -31,7 +30,7 @@ Things we are explicitly NOT interested in (and we will auto close):
 - Support for additional platforms (I already regret Windows ARM)
 
 In case we haven't made this clear: The reason to contribute is fixing bugs. If you want anything from
-the list above that the [vouched exception](#vouched-features) does not cover, the "issues" and "discussion" tabs are there for a reason :)
+the list above, the "issues" and "discussion" tabs are there for a reason :)
 
 Now that all of this has been said, let's discuss the best practices when contributing to T3 Code.
 
@@ -66,15 +65,6 @@ A small fix for an obvious bug needs no issue. For a larger fix, link the issue 
 
 A maintainer can ask you to open a PR that is not a bug fix. Link the request.
 
-<a id="vouched-features"></a>
-
-Vouched contributors in [.github/VOUCHED.td](.github/VOUCHED.td) can also open a small, focused
-feature PR without a request. Everything else on the list above is still closed: UI overhauls, new
-providers, architecture overhauls, source control, auth, and platforms.
-
-You can have 3 of these feature PRs open. A fourth is closed. Get one merged or closed, then open it
-again. Bug fix PRs do not count.
-
 <a id="one-problem"></a>
 
 ### One problem per PR
@@ -106,18 +96,15 @@ tell them about this rule.
 
 ### 3 open PRs per person
 
-You can have 3 open PRs. A fourth is closed when you open it. Get one merged or closed, then open it
+You can have 3 open PRs. A fourth is closed. Get one merged or closed, then open it
 again.
 
 <a id="conflict-window"></a>
 
 ### Keep your PR mergeable
 
-A PR that conflicts with its base branch gets a `needs-rebase` label. If it still conflicts after 7
+A PR that conflicts with its base branch needs a rebase. If it still conflicts after 7
 days with no activity, it is closed.
-
-Vouched contributors in [.github/VOUCHED.td](.github/VOUCHED.td) are exempt from this rule and from
-the open PR limit. The [feature PR limit](#vouched-features) still applies to them.
 
 ## Bans
 
@@ -125,15 +112,14 @@ the open PR limit. The [feature PR limit](#vouched-features) still applies to th
 - If you make our lives harder as reviewers and maintainers, you will be banned. Examples are repeated
   pings, a fight over a closure, and a second account to get around a limit.
 
-A banned account is denounced in [.github/VOUCHED.td](.github/VOUCHED.td). Any issue or PR it opens
-is closed when it is opened.
+A banned account's issues and PRs are closed.
 
 <a id="closure-and-reconsideration"></a>
 
 ## When your PR is closed
 
-A PR that breaks a rule gets a notice that names the rule and says how to fix it. The PR closes 72
-hours later. A reply or a push in that time sends it back for another look.
+A PR that breaks a rule gets a notice that names the rule and says how to fix it, and is then closed.
+A reply or a push sends it back for another look.
 
 After it is closed, fix the problem and comment on the PR, or open a focused replacement PR that links
 the old one.

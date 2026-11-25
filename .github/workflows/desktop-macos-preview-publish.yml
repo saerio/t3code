@@ -6,9 +6,9 @@ name: Desktop macOS Preview Publish
 # notarization, publishing) is main's code.
 #
 # Gate, in order: the completed build run belongs to an open PR that still
-# carries the preview:mac label and whose head is the built commit, and the PR
-# author is trusted by the vouch list. A maintainer applying the label alone is
-# not enough, since the bundle gets signed with the Developer ID certificate.
+# carries the preview:mac label and whose head is the built commit. Only a
+# maintainer can apply the label, and the bundle gets signed with the Developer
+# ID certificate.
 #
 # The label is consumed here once the gate passes, so it only ever covers the
 # one commit a maintainer applied it to. A later push builds nothing until the
@@ -129,18 +129,6 @@ jobs:
             core.setOutput("head_sha", pull.head.sha);
             core.setOutput("author", pull.user.login);
 
-      # Reads VOUCHED.td from the default branch through the API, so a PR
-      # cannot vouch for itself.
-      - id: vouch
-        name: Check PR author trust
-        if: steps.pr.outputs.eligible == 'true'
-        uses: mitchellh/vouch/action/check-user@d66fa29a64600490892131ad87597c30c91fcac4 # v1.5.0
-        with:
-          user: ${{ steps.pr.outputs.author }}
-          allow-fail: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       # The label authorized exactly this build, so take it now, before the
       # long signing job. Removing it with GITHUB_TOKEN does not fire the
       # unlabeled cleanup below (workflow-token events never start runs), so
@@ -174,24 +162,13 @@ jobs:
         env:
           PR_ELIGIBLE: ${{ steps.pr.outputs.eligible }}
           LABEL_CONSUMED: ${{ steps.consume.outputs.consumed }}
-          VOUCH_STATUS: ${{ steps.vouch.outputs.status }}
-          AUTHOR: ${{ steps.pr.outputs.author }}
         run: |
           set -euo pipefail
           if [[ "$PR_ELIGIBLE" != "true" || "$LABEL_CONSUMED" != "true" ]]; then
             echo "eligible=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          case "$VOUCH_STATUS" in
-            bot|collaborator|vouched)
-              echo "Author $AUTHOR is trusted ($VOUCH_STATUS)."
-              echo "eligible=true" >> "$GITHUB_OUTPUT"
-              ;;
-            *)
-              echo "Author $AUTHOR is not vouched ($VOUCH_STATUS). Add them to .github/VOUCHED.td to allow signed previews."
-              echo "eligible=false" >> "$GITHUB_OUTPUT"
-              ;;
-          esac
+          echo "eligible=true" >> "$GITHUB_OUTPUT"
 
       # Same inputs as the build workflow, read from the built commit through
       # the contents API as data: the desktop manifest's base version plus the

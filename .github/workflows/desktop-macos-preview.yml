@@ -3,7 +3,7 @@ name: Desktop macOS Preview
 # Untrusted half of the macOS preview. This runs PR code (including fork PRs)
 # with a read-only token and no secrets, and only produces the JS bundle. The
 # trusted half, desktop-macos-preview-publish.yml, runs on workflow_run from
-# main, verifies the PR author is vouched, then packages, signs, notarizes, and
+# main, then packages, signs, notarizes, and
 # publishes the bundle without ever executing it.
 #
 # The label is a one-shot request for the commit it was applied to, not a
