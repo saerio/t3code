@@ -552,20 +552,6 @@ export const SETTINGS_SEARCH_ITEMS = [
     ],
   },
   {
-    id: "guest-links",
-    title: msg("Guest links"),
-    to: "/settings/labs",
-    scope: "environment",
-    searchTerms: [msg("beta share guest invite link teammate watch t3 connect tunnel")],
-  },
-  {
-    id: "linked-environments-beta",
-    title: msg("Linked environments"),
-    to: "/settings/labs",
-    scope: "environment",
-    searchTerms: [msg("beta link another machine vps peer agents work there delegate")],
-  },
-  {
     id: "workflows-beta",
     title: msg("Workflows"),
     to: "/settings/labs",
