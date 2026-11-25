@@ -47,9 +47,13 @@ const hostedSegment = (id: string) =>
   );
 
 /** Opens the thread from anywhere: the hosted app offers the desktop app, the mobile app, or itself. */
-export function hostedThreadLink(ref: ScopedThreadRef, origin = DEFAULT_HOSTED_APP_URL): string {
-  const path = `/threads/${hostedSegment(ref.environmentId)}/${hostedSegment(ref.threadId)}`;
-  return new URL(path, origin).toString();
+export function hostedThreadLink(ref: ScopedThreadRef, origin?: string): string {
+  if (origin !== undefined) {
+    const path = `/threads/${hostedSegment(ref.environmentId)}/${hostedSegment(ref.threadId)}`;
+    return new URL(path, origin).toString();
+  }
+  // No T3-hosted app in this fork: without an explicit origin, link with the app's own scheme.
+  return threadLinkHref(ref);
 }
 
 const HOSTED_PATH = new RegExp(`^(${HOSTED_SEGMENT})/(${HOSTED_SEGMENT})$`);
