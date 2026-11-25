@@ -265,6 +265,8 @@ const layerService = (input: {
     Layer.provideMerge(layerHttpClient(input.response)),
   );
 
+process.env.T3CODE_MODEL_MANIFEST_URL = "https://manifest.example.test/model-manifest.json";
+
 describe("ModelManifest service", () => {
   it.effect("prefers a fetched manifest over the bundle and caches it to disk", () =>
     Effect.gen(function* () {

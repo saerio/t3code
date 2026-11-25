@@ -83,7 +83,7 @@ const VARIANT_CONFIG = {
     scheme: "t3code-dev",
     iosBundleIdentifier: "com.t3tools.t3code.dev",
     androidPackage: "com.t3tools.t3code.dev",
-    relyingParty: "clerk.t3.codes",
+    relyingParty: repoEnv.T3CODE_CLERK_RELYING_PARTY?.trim() || null,
     assets: DEVELOPMENT_ASSETS,
   },
   preview: {
@@ -91,7 +91,7 @@ const VARIANT_CONFIG = {
     scheme: "t3code-preview",
     iosBundleIdentifier: "com.t3tools.t3code.preview",
     androidPackage: "com.t3tools.t3code.preview",
-    relyingParty: "clerk.t3.codes",
+    relyingParty: repoEnv.T3CODE_CLERK_RELYING_PARTY?.trim() || null,
     assets: PREVIEW_ASSETS,
   },
   production: {
@@ -99,7 +99,7 @@ const VARIANT_CONFIG = {
     scheme: "t3code",
     iosBundleIdentifier: "com.t3tools.t3code",
     androidPackage: "com.t3tools.t3code",
-    relyingParty: "clerk.t3.codes",
+    relyingParty: repoEnv.T3CODE_CLERK_RELYING_PARTY?.trim() || null,
     assets: RELEASE_ASSETS,
   },
 } as const;
@@ -119,7 +119,8 @@ function resolveAppVariant(value: string | undefined): AppVariant {
 
 const variant = VARIANT_CONFIG[APP_VARIANT];
 // Copied thread links open the app. app.t3.codes/.well-known lists every variant's identifiers.
-const HOSTED_APP_HOST = "app.t3.codes";
+// Operator-set only; this fork does not claim a T3 domain.
+const HOSTED_APP_HOST = repoEnv.T3CODE_HOSTED_APP_HOST?.trim() || null;
 const iosBundleIdentifier = isIosPersonalTeamBuild
   ? personalTeamBundleIdentifier!
   : variant.iosBundleIdentifier;
@@ -259,9 +260,10 @@ const config: ExpoConfig = {
     // Avoid Personal Team fallback: it cannot sign App Groups, Apple sign-in or push entitlements.
     appleTeamId: "ARK85ZXQ4Z",
     associatedDomains: [
-      `applinks:${variant.relyingParty}`,
-      `webcredentials:${variant.relyingParty}`,
-      `applinks:${HOSTED_APP_HOST}`,
+      ...(variant.relyingParty
+        ? [`applinks:${variant.relyingParty}`, `webcredentials:${variant.relyingParty}`]
+        : []),
+      ...(HOSTED_APP_HOST ? [`applinks:${HOSTED_APP_HOST}`] : []),
     ],
     entitlements: {
       "keychain-access-groups": [`$(AppIdentifierPrefix)${variant.iosBundleIdentifier}`],
@@ -314,14 +316,16 @@ const config: ExpoConfig = {
     predictiveBackGestureEnabled: true,
     // expo-sensors declares this for its pedometer, which the app does not use.
     blockedPermissions: ["android.permission.ACTIVITY_RECOGNITION"],
-    intentFilters: [
-      {
-        action: "VIEW",
-        autoVerify: true,
-        data: [{ scheme: "https", host: HOSTED_APP_HOST, pathPrefix: "/threads/" }],
-        category: ["BROWSABLE", "DEFAULT"],
-      },
-    ],
+    intentFilters: HOSTED_APP_HOST
+      ? [
+          {
+            action: "VIEW",
+            autoVerify: true,
+            data: [{ scheme: "https", host: HOSTED_APP_HOST, pathPrefix: "/threads/" }],
+            category: ["BROWSABLE", "DEFAULT"],
+          },
+        ]
+      : [],
   },
   web: {
     favicon: variant.assets.appIcon,
