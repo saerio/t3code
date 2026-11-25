@@ -1247,7 +1247,8 @@ jobs:
             exit 1
           fi
 
-          router_url="${T3CODE_WEB_ROUTER_URL:-https://app.t3.codes}"
+          router_url="${T3CODE_WEB_ROUTER_URL:-}"
+          if [[ -z "$router_url" ]]; then echo "T3CODE_WEB_ROUTER_URL is not set; this fork has no hosted web router." >&2; exit 1; fi
           if [[ "${{ needs.preflight.outputs.release_channel }}" == "stable" ]]; then
             channel_name="latest"
           else
@@ -1327,7 +1328,8 @@ jobs:
             exit 1
           fi
 
-          router_url="${T3CODE_WEB_ROUTER_URL:-https://app.t3.codes}"
+          router_url="${T3CODE_WEB_ROUTER_URL:-}"
+          if [[ -z "$router_url" ]]; then echo "T3CODE_WEB_ROUTER_URL is not set; this fork has no hosted web router." >&2; exit 1; fi
           latest_domain="${T3CODE_WEB_LATEST_DOMAIN:-latest.app.t3.codes}"
           nightly_domain="${T3CODE_WEB_NIGHTLY_DOMAIN:-nightly.app.t3.codes}"
           router_domain="${router_url#http://}"
