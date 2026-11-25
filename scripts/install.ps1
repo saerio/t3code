@@ -16,6 +16,9 @@
 $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
+if (-not $env:T3CODE_RELEASE_BASE_URL) {
+  throw "This fork does not install upstream T3 Code release archives (they bring back removed telemetry and T3 service code). Build from source, or set T3CODE_RELEASE_BASE_URL to your own release mirror."
+}
 $repo = "pingdotgg/t3code"
 $baseUrl = if ($env:T3CODE_RELEASE_BASE_URL) { $env:T3CODE_RELEASE_BASE_URL.TrimEnd("/") } else { "https://github.com/$repo/releases/download" }
 $t3Home = if ($env:T3CODE_HOME) { $env:T3CODE_HOME } else { Join-Path $HOME ".t3" }

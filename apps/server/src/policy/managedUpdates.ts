@@ -5,6 +5,9 @@ import {
 } from "@t3tools/contracts";
 import type { CliReleaseChannel } from "@t3tools/shared/cliRelease";
 
+export const FORK_UPDATE_REFUSAL =
+  "This build does not update from upstream T3 Code releases. Update by pulling and rebuilding from your own repository, or set T3CODE_ALLOW_UPSTREAM_UPDATES=1 to accept upstream releases anyway.";
+
 /**
  * The update mirror the policy sends updates to, or `undefined` for the public releases. It wins
  * over the environment, which a user can set.
@@ -26,6 +29,14 @@ export function managedUpdateRefusal(
   targetChannel?: CliReleaseChannel,
 ): string | undefined {
   const updates = document?.limits?.updates;
+  // This fork does not download upstream T3 Code releases: they would bring back the removed
+  // telemetry and T3 service code. A managed update mirror the administrator set still works.
+  if (
+    (document === undefined || updates === undefined || updates.feedUrl === undefined) &&
+    process.env.T3CODE_ALLOW_UPSTREAM_UPDATES !== "1"
+  ) {
+    return FORK_UPDATE_REFUSAL;
+  }
   if (document === undefined || updates === undefined) return undefined;
   if (updates.mode === "off") return managedUpdatesMessage(document.organization);
   if (updates.allowNightly === false && targetChannel !== undefined && targetChannel !== "stable") {

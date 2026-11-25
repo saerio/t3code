@@ -1,3 +1,5 @@
+// The fork refuses upstream updates unless this is set; these tests cover the update flow itself.
+process.env.T3CODE_ALLOW_UPSTREAM_UPDATES = "1";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { assert, it } from "@effect/vitest";
 import type { ManagedUpdatesPolicy } from "@t3tools/contracts";
@@ -154,6 +156,16 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
         ),
       ),
     );
+
+  it.effect("refuses upstream updates when no managed mirror is set", () =>
+    Effect.gen(function* () {
+      delete process.env.T3CODE_ALLOW_UPSTREAM_UPDATES;
+      const error = yield* runWithPolicy({ mode: "auto" }).pipe(
+        Effect.ensuring(Effect.sync(() => (process.env.T3CODE_ALLOW_UPSTREAM_UPDATES = "1"))),
+      );
+      assert.include(error.message, "does not update from upstream");
+    }),
+  );
 
   it.effect("refuses to update when updates are off", () =>
     Effect.gen(function* () {

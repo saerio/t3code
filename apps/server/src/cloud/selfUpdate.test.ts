@@ -1,3 +1,5 @@
+// The fork refuses upstream updates unless this is set; these tests cover the update flow itself.
+process.env.T3CODE_ALLOW_UPSTREAM_UPDATES = "1";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import { expect, it } from "@effect/vitest";
 import type { ManagedPolicyDocument } from "@t3tools/contracts";

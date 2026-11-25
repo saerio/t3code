@@ -17,6 +17,11 @@
 # instead of fetching the release again.
 set -eu
 
+if [ -z "${T3CODE_RELEASE_BASE_URL:-}" ]; then
+  echo "error: this fork does not install upstream T3 Code release archives (they bring back removed telemetry and T3 service code). Build from source, or set T3CODE_RELEASE_BASE_URL to your own release mirror." >&2
+  exit 1
+fi
+
 repo="pingdotgg/t3code"
 base_url="${T3CODE_RELEASE_BASE_URL:-https://github.com/${repo}/releases/download}"
 t3_home="${T3CODE_HOME:-$HOME/.t3}"
