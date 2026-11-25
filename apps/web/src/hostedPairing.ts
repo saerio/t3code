@@ -1,5 +1,3 @@
-import { DEFAULT_HOSTED_APP_URL } from "@t3tools/shared/connectAuth";
-
 import { getPairingTokenFromUrl, setPairingTokenOnUrl } from "@t3tools/shared/remote";
 
 export interface HostedPairingRequest {
@@ -15,8 +13,11 @@ export function optionalHostedAppUrl(): string | undefined {
   return import.meta.env.VITE_HOSTED_APP_URL?.trim() || undefined;
 }
 
+/** The operator-set hosted app. This fork has no built-in one, so callers check first. */
 export function configuredHostedAppUrl(): string {
-  return import.meta.env.VITE_HOSTED_APP_URL?.trim() || DEFAULT_HOSTED_APP_URL;
+  const url = optionalHostedAppUrl();
+  if (url === undefined) throw new Error("VITE_HOSTED_APP_URL is not set; there is no hosted app.");
+  return url;
 }
 
 function configuredBackendUrl(): string {
@@ -49,7 +50,8 @@ export function isHostedStaticApp(url?: URL): boolean {
     return false;
   }
 
-  const hostedOrigin = originFromUrl(configuredHostedAppUrl());
+  const hostedAppUrl = optionalHostedAppUrl();
+  const hostedOrigin = hostedAppUrl === undefined ? null : originFromUrl(hostedAppUrl);
   return hostedOrigin !== null && (url ?? new URL(window.location.href)).origin === hostedOrigin;
 }
 
