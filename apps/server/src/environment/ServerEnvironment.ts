@@ -306,7 +306,8 @@ export const make = Effect.gen(function* () {
       mcpHostedApproval: true,
       shellThreadFamilies: true,
       shellOlderSettled: true,
-      agentFeedback: true,
+      // This fork has no feedback destination: the Labs control stays hidden.
+      agentFeedback: false,
     },
   };
 

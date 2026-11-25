@@ -293,7 +293,8 @@ const makeMcpAuthMiddleware = Effect.gen(function* () {
   const settingsFlags = serverSettings.getSettings.pipe(
     Effect.map((settings) => ({
       linkedEnvironments: settings.linkedEnvironmentsEnabled,
-      agentFeedback: settings.agentFeedback.mode,
+      // Agents are never offered feedback tools: this fork has nowhere to send reports.
+      agentFeedback: "off" as const,
       workflows: settings.workflowsEnabled,
     })),
     Effect.orElseSucceed(() => ({
